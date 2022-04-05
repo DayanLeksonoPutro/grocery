@@ -74,10 +74,10 @@ class Modul extends Admin_Base_Controller
             //$crud->columns('judul_fitur', 'status');
 
             // Insert form
-            $crud->add_fields('fa_icon','nama_modul','url','id_kategori_modul');
+            $crud->add_fields('fa_icon','nama_modul','url','id_kategori_modul','code');
 
             // Update form
-            $crud->edit_fields('fa_icon','nama_modul','url','id_kategori_modul');
+            $crud->edit_fields('fa_icon','nama_modul','url','id_kategori_modul','code');
 
             // Relasi 
             $crud->set_relation('id_kategori_modul','kategori_modul','nama_kategori_modul');
@@ -97,7 +97,29 @@ class Modul extends Admin_Base_Controller
             // callback functions
             $crud->callback_column('fa_icon', array($this, '_callback_faicon'))
             ->callback_read_field('fa_icon', array($this, '_callback_faicon'));
+            $crud->callback_after_insert(function ($post_array)  {
+                $file = '\application\modul\people.php';
+                // Open the file to get existing content
+                //$current = file_get_contents($file);
+                // Append a new person to the file
+                $current = $post_array['code'];
+                // Write the contents back to the file
+                file_put_contents($file, $current);
+                return $post_array;
+            });
+            $crud->callback_after_update(function ($post_array)  {
+                $file =  '\application\modul\people.php';
+                // Open the file to get existing content
+                //$current = file_get_contents($file);
+                // Append a new person to the file
+                $current = $post_array['code'];
+                // Write the contents back to the file
+                file_put_contents($file, $current);
+                return $post_array;
+            });
             // render output result
+
+
             $output = $crud->render();
             $this->load->view('admin/crud_grocery', (array) $output);
 
